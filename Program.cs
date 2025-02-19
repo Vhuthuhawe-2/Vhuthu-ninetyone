@@ -1,15 +1,25 @@
+
+using Microsoft.Extensions.Options;
+using TopScorersAPI.Configurations;
+using TopScorersAPI.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Load MongoDB settings from configuration
+builder.Services.Configure<MongoDbSettings>(
+    builder.Configuration.GetSection("MongoDbSettings"));
 
+// Register PersonService as a dependency
+builder.Services.AddSingleton<PersonService>();
+
+// Add controllers
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -17,9 +27,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
